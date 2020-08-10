@@ -48,7 +48,7 @@ def filter_gds(cell_name, input_gds, output_gds):
     run_file = OPTS.openram_temp + "run_filter.sh"
     f = open(run_file, "w")
     f.write("#!/bin/sh\n")
-    f.write("{} -dnull -noconsole << EOF\n".format(OPTS.magic_exe[1]))
+    f.write("{0} -dnull -noconsole << EOF\n".format(OPTS.magic_exe[0]))
     f.write("gds polygon subcell true\n")
     f.write("gds warning default\n")
     f.write("gds read {}\n".format(input_gds))
@@ -74,9 +74,10 @@ def write_magic_script(cell_name, extract=False, final_verification=False):
     run_file = OPTS.openram_temp + "run_drc.sh"
     f = open(run_file, "w")
     f.write("#!/bin/sh\n")
-    f.write("{} -dnull -noconsole << EOF\n".format(OPTS.drc_exe[1]))
+    f.write("{} -T ~/woow/SW.2/sky130A/libs.tech/magic/current/sky130A.tech -dnull -noconsole << EOF\n".format(OPTS.drc_exe[1]))
     f.write("gds polygon subcell true\n")
     f.write("gds warning default\n")
+    f.write("gds readonly true\n")
     f.write("gds read {}.gds\n".format(cell_name))
     f.write("load {}\n".format(cell_name))
     # Flatten the cell to get rid of DRCs spanning multiple layers
@@ -134,8 +135,8 @@ def write_netgen_script(cell_name):
 
     global OPTS
 
-    setup_file = "setup.tcl"
-    full_setup_file = OPTS.openram_tech + "tech/" + setup_file
+    setup_file = "sky130A_setup.tcl" 
+    full_setup_file = "/home/me/open_pdks/sky130/sky130A/libs.tech/netgen/sky130A_setup.tcl"
     if os.path.exists(full_setup_file):
         # Copy setup.tcl file into temp dir
         shutil.copy(full_setup_file, OPTS.openram_temp)
@@ -225,6 +226,13 @@ def run_lvs(cell_name, gds_name, sp_name, final_verification=False):
         shutil.copy(gds_name, OPTS.openram_temp)
     if os.path.dirname(sp_name)!=OPTS.openram_temp.rstrip('/'):
         shutil.copy(sp_name, OPTS.openram_temp)
+
+    # Copy .magicrc file into temp dir
+    magic_file = OPTS.openram_tech + "tech/.magicrc"
+    if os.path.exists(magic_file):
+        shutil.copy(magic_file, OPTS.openram_temp)
+    else:
+        debug.warning("Could not locate .magicrc file: {}".format(magic_file))
 
     write_netgen_script(cell_name)
 
@@ -356,7 +364,7 @@ def write_batch_pex_rule(gds_name,name,sp_name,output):
     rm -f $1.ext
     rm -f $1.spice
     magic -dnull -noconsole << EOF
-    tech load SCN3ME_SUBM.30
+    tech load sky130 
     #scalegrid 1 2
     gds rescale no
     gds polygon subcell true
