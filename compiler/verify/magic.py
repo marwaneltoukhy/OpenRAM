@@ -48,7 +48,7 @@ def filter_gds(cell_name, input_gds, output_gds):
     run_file = OPTS.openram_temp + "run_filter.sh"
     f = open(run_file, "w")
     f.write("#!/bin/sh\n")
-    f.write("{0} -dnull -noconsole << EOF\n".format(OPTS.magic_exe[0]))
+    f.write("{} -dnull -noconsole << EOF\n".format(OPTS.magic_exe[1]))
     f.write("gds polygon subcell true\n")
     f.write("gds warning default\n")
     f.write("gds read {}\n".format(input_gds))
@@ -74,7 +74,7 @@ def write_magic_script(cell_name, extract=False, final_verification=False):
     run_file = OPTS.openram_temp + "run_drc.sh"
     f = open(run_file, "w")
     f.write("#!/bin/sh\n")
-    f.write("{} -T ~/woow/SW.2/sky130A/libs.tech/magic/current/sky130A.tech -dnull -noconsole << EOF\n".format(OPTS.drc_exe[1]))
+    f.write("{} -dnull -noconsole << EOF\n".format(OPTS.drc_exe[1]))
     f.write("gds polygon subcell true\n")
     f.write("gds warning default\n")
     f.write("gds readonly true\n")
@@ -135,8 +135,8 @@ def write_netgen_script(cell_name):
 
     global OPTS
 
-    setup_file = "sky130A_setup.tcl" 
-    full_setup_file = "/home/me/open_pdks/sky130/sky130A/libs.tech/netgen/sky130A_setup.tcl"
+    setup_file = "sky130A_setup.tcl"
+    full_setup_file = "/ef/tech/SW.2/sky130A/libs.tech/netgen/"+setup_file 
     if os.path.exists(full_setup_file):
         # Copy setup.tcl file into temp dir
         shutil.copy(full_setup_file, OPTS.openram_temp)
