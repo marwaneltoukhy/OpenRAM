@@ -230,9 +230,9 @@ class stimuli():
             # which is more accurate, but slower than the default trapezoid method
             # Do not remove this or it may not converge due to some "pa_00" nodes
             # unless you figure out what these are.
-            self.sf.write(".OPTIONS POST=1 RELTOL={0} PROBE method=gear\n".format(reltol))
+            self.sf.write("*.OPTIONS POST=1 RELTOL={0} PROBE method=gear\n".format(reltol))
         else:
-            self.sf.write(".OPTIONS POST=1 RUNLVL={0} PROBE\n".format(runlvl))
+            self.sf.write("*.OPTIONS POST=1 RUNLVL={0} PROBE\n".format(runlvl))
 
         # create plots for all signals
         self.sf.write("* probe is used for hspice/xa, while plot is used in ngspice\n")
@@ -244,7 +244,20 @@ class stimuli():
         else:
             self.sf.write("*.probe V(*)\n")
             self.sf.write("*.plot V(*)\n")
-
+        self.sf.write(".save i(bpa_00) i(bpa_01) i(bpa_02) i(bpa_03) i(bpa_04) i(bpa_05) i(bpa_06) i(bpa_07)")
+        self.sf.write(".save i(va0_0) i(va0_1) i(va0_2) i(va0_3)")
+        self.sf.write(".save i(va0_3) i(va1_1) i(va1_2) i(va1_3)")
+        self.sf.write(".save i(vclk0) i(vclk1)")
+        self.sf.write(".save i(vcsb0) i(vcsb1)")
+        self.sf.write(".save i(vdin0_0) i(vdin0_1)")
+        self.sf.write(".save i(vvdd)")
+        self.sf.write(".save i(vweb0)")
+        self.sf.write(".save V(a0_0) V(a0_1) V(a0_2) V(a0_3)")
+        self.sf.write(".save V(a1_0) V(a1_1) V(a1_2) V(a1_3)")
+        self.sf.write(".save V(clk0) V(clk1)")
+        self.sf.write(".save V(csb0) V(csb1)")
+        self.sf.write(".save V(din0_0) V(din0_1)")
+        self.sf.write(".save V(dout0_0) V(dout0_1) V(dout0_1) V(dout0_1)")
         # end the stimulus file
         self.sf.write(".end\n\n")
 
